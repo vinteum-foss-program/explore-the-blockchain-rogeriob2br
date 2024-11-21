@@ -4,11 +4,8 @@ hash_257343=$(bitcoin-cli getblockhash 257343)
 coinbase_txid=$(bitcoin-cli getblock $hash_256128 | jq -r '.tx[0]')
 txs_257343=$(bitcoin-cli getblock $hash_257343 | jq -r '.tx[]')
 for tx in $txs_257343; do
-    # Obter a transação e decodificá-la
     raw_tx=$(bitcoin-cli getrawtransaction $tx)
     decoded_tx=$(bitcoin-cli decoderawtransaction $raw_tx)
-
-    # Verificar cada input da transação
     for vin in $(echo $decoded_tx | jq -r '.vin[].txid'); do
         if [ "$vin" == "$coinbase_txid" ]; then
             echo "$tx"
